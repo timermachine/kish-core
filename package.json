@@ -1,19 +1,14 @@
 {
   "name": "kish-core",
-  "version": "1.0.1",
+  "version": "0.0.5",
   "description": "command line shortcuts for git:g, npm: n, yarn:y. mono/multi/poly repo ready.",
   "author": "Henry Kemp",
   "license": "MIT",
-  "homepage" : "https://github.com/ticaboo/kish",
+  "homepage" : "https://github.com/timermachine/kish",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ticaboo/kish-core.git"
+    "url": "git+https://github.com/timermachine/kish-core.git"
   },
   "scripts": {
-    "setup": "chmod +x src/install.sh && ./src/install.sh -i ",
-    "remove": "chmod +x src/remove.sh && ./src/remove.sh -i ",
-    "update": "./src/remove.sh && ./src/install.sh ",
-    "generate": "chmod +x src/generate.sh && ./src/generate.sh",
-    "wsinit": "chmod +x src/workspaceinit.sh && ./src/workspaceinit.sh"
   }
 }
