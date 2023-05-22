@@ -4,11 +4,10 @@
   "description": "command line shortcuts for git:g, npm: n, yarn:y. mono/multi/poly repo ready.",
   "author": "Henry Kemp",
   "license": "MIT",
-  "homepage" : "https://github.com/timermachine/kish",
+  "homepage": "https://github.com/timermachine/kish",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/timermachine/kish-core.git"
   },
-  "scripts": {
-  }
+  "scripts": {}
 }
