@@ -2,9 +2,9 @@
 # clear
 kcore=$PWD/node_modules/kish-core
 
-echo ''
-cat $kcore/src/lib/ascii.txt
-echo ''
+# echo ''
+# cat $kcore/src/lib/ascii.txt
+# echo ''
 
 dest="$HOME/.kish"
 alias_source="source $dest/aliases.sh "
@@ -86,16 +86,18 @@ fi
 stinstall() {
   # echo 'prepare$PWD.'
   #  clear
-  echo 'Preflight checks passed'
-  echo ''
-  echo 'Welcome to the Ki sh installation.'
-  echo "Installs to $dest."
-  echo ''
+  
+  # echo 'Preflight checks passed'
+  # echo ''
+  # echo 'Welcome to the Ki sh installation.'
+  # echo "Installs to $dest."
+  # echo ''
+
   # echo "You should look at the code to check its safe."
   # echo 'Easy minute to check -only 400 simple lines. put it in all in one file:'
   # echo '$ find kish/ -name '*.sh' -exec cat {} \; > allcode.sh'
   # echo '$ find kish/lib -name '*.sh' -exec cat {} \; >> allcode.sh'
-  echo ''
+  # echo ''
   mkdir "$dest"
   mkdir "$dest/lib"
 
@@ -175,11 +177,10 @@ stinstall() {
     echo "$alias_source" >>"$HOME/.bashrc"
   fi
 
-  echo
-  echo 'Installation complete.'
-  echo 'ONE MANUAL STEP, and all done: restart terminal or:'
-  echo '$ source $HOME/.zshrc or source $HOME/.bashrc'
-  echo 'then type ki (kish help) to check install worked and for guidance.'
+  echo 'ki sh Updated.'
+  echo 'if new aliases added restart terminal.' 
+  echo '$>ki for generated help.'
+  echo ''
 
 }
 
