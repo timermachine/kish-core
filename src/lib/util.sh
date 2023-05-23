@@ -8,36 +8,46 @@ function join { local IFS="$1"; shift; echo "$*"; }
 # cmdurl
 # takes succinct command line input
 # and converts to url
-# globaly (yuk) , sets $domain,$paths, $q
+# globaly (yuk) , sets $url
+# ?type=issues
 function cmdurl () {
 
-    # split $1 into domain and trailing path/s
-    arr=(`echo $1 | tr '/' ' '`)
+    # split $1 into domain+paths (\? delimiter) query after delimiter
+    local dom_query=(`echo $1 | tr '\?' ' '`)
+    echo 'dom_query' $dom_query
+    if [[ ${#dom_query[@]} == 2 ]]; then
+     local query=${dom_query[1]}
+    fi
+    echo "query $query"
+   
 
-    domain=${arr[0]}
+    # split dom of dom_query into domain and trailing path/s
+    local arr=(`echo ${dom_query[0]} | tr '/' ' '`)
+
+    local domain=${arr[0]}
 
     unset arr[0]
-    paths=$(join '/' ${arr[@]})
+    local paths=$(join '/' ${arr[@]})
 
     # default to .com if eg no .co.uk etc specified:
     if [[ ! $domain == *"."* ]]; then
-    domain="https://$domain.com"
+    local domain="$domain.com"
     fi
 
     # default to https:// if protocol not specified:
     # todo: slash splitting above messing with this. account for ://
     if [[ ! $domain == *":"* ]]; then
-    domain="https://$domain"
+    local domain="https://$domain"
     fi
 
     shift
 
     # echo "@"
-    joined=$(join '+' $@)
-    q=$joined
+    local joined=$(join '+' $@)
+    local q=$joined
     # q=$(urlencode $joined)
     # echo $q
-
+    url="$domain/$paths?q=$q&$query"
 }
 
 
