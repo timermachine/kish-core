@@ -112,8 +112,11 @@ stinstall() {
   touch $help_file
   echo "" >$help_file
 
+  prev_first_letter=''
   # update aliases.sh based on all scripts in src/kish/
   for f in ./aliases/*; do
+  
+ 
     if [[ -f "$f" ]]; then
       a=${f/.\/aliases\//''} # trim path before cmd name
       b=${a/'.sh'/''}           #trim off .sh
@@ -128,7 +131,17 @@ stinstall() {
 
         cmd="$(echo $(grep 'cmd=' $f) | cut -d'=' -f2)"
 
-        #  get cmd from file grep? cmd="ls -1 --color"
+    first_letter=${b:0:1}
+     if [  "$prev_first_letter" = "$first_letter" ]; then
+         unchanged_first_letter=true # dummy var so can else. yuk
+        #  echo "$prev_first_letter = $first_letter"
+      else
+    #  echo "$prev_first_letter not eq $first_letter"
+     echo "" >>$help_file
+      echo "    [$first_letter]..." >>$help_file  # line break when first letter changes.  
+      prev_first_letter=$first_letter 
+     fi 
+    
         spaces=$((10 - ${#b}))
         printf "     %s %*s :      %s \n" "$b" "$spaces" "" "$cmd" >>$help_file
       fi

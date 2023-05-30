@@ -8,8 +8,11 @@ function join { local IFS="$1"; shift; echo "$*"; }
 # cmdurl
 # takes succinct command line input
 # and converts to url
+# params:
+# $1 domainname/path/s\?customquery=something&another=somethingelse
+# $2... the search terms, no need to use quotes
+# qkey usually q, search_query (eg youtube)
 # globaly (yuk) , sets $url
-# ?type=issues
 function cmdurl () {
 
     # split $1 into domain+paths (\? delimiter) query after delimiter
@@ -46,8 +49,7 @@ function cmdurl () {
     local joined=$(join '+' $@)
     local q=$joined
     # q=$(urlencode $joined)
-    # echo $q
-    url="$domain/$paths?q=$q&$query"
+    url="$domain/$paths?$qkey=$q&$query"
 }
 
 
