@@ -3,6 +3,8 @@
 
 
 function join { local IFS="$1"; shift; echo "$*"; }
+function join_by { local d=$1; shift; local f=$1; shift; datestr=$( printf %s "$f" "${@/#/$d}" ); }
+
 
 
 # cmdurl
@@ -51,6 +53,116 @@ function cmdurl () {
     # q=$(urlencode $joined)
     url="$domain/$paths?$qkey=$q&$query"
 }
+
+# TODO: not working - returning with echo fails when 3 functions involved
+# return $1 right padded with zeros to total length $2
+# eg 3 4 -> 3000
+# optional $3 padding character. defaults to 0.
+# function pad(){
+#     local res=""
+#     padto=$(($2 - ${#1}))
+
+#     padchar='0' # deafult 
+
+#    if (( $# == 3 )); then
+#         # override default with last param
+#         padchar="${@: -1}"
+#     fi
+
+#     # echo $padto
+#     for (( i=1; i<=$padto; i++ )) do 
+#        res+=$padchar
+#     done
+#     echo $res
+# }
+
+# function lpad(){
+#     lres= pad $1 $2
+#     echo "lres $lres"
+#     lres+= $1
+#     echo $lres
+# }
+
+# function rpad(){
+#     padding= pad $1 $2
+#     rres= $1
+#     rres+= $padding
+#     echo $rres
+# }
+
+
+#  rpadding= rpad "x" "2"
+#  echo 'rpadding' $rpadding
+
+#  lpadding= lpad "x" "2"
+#  echo 'lpadding' $lpadding
+
+
+# function lpad(){
+#     local res=""
+#     padto=$(($2 - ${#1}))
+
+#     padchar='0' # deafult 
+
+#    if (( $# == 3 )); then
+#         # override default with last param
+#         padchar="${@: -1}"
+#     fi
+
+#     # echo $padto
+#     for (( i=1; i<=$padto; i++ )) do 
+#        res+=$padchar
+#     done
+#     echo "$res$1"
+# }
+# left then right pads in one go
+#  chartopad lpadby rpadby optionalpadchar
+function lrpad(){
+    local res=""
+    local padto=$(($2 - ${#1}))
+
+    padchar='0' # deafult 
+
+   if (( $# == 4 )); then
+        # override default with last param
+        padchar="${@: -1}"
+    fi
+
+    # echo $padto
+    for (( i=1; i<=$padto; i++ )) do 
+       res+=$padchar
+    done
+    res+="$1"
+    # now right pad the left padded string
+
+    padto=$(($3 - ${#res}))
+    for (( i=1; i<=$padto; i++ )) do 
+       res+=$padchar
+    done
+    result=$res
+    # echo "$res"
+}
+
+
+
+# function rpad(){
+#     local res=""
+#     padto=$(($2 - ${#1}))
+
+#     padchar='0' # deafult 
+
+#    if (( $# == 3 )); then
+#         # override default with last param
+#         padchar="${@: -1}"
+#     fi
+
+#     # echo $padto
+#     for (( i=1; i<=$padto; i++ )) do 
+#        res+=$padchar
+#     done
+#     echo "$1$res"
+# }
+
 
 
 # function urlencode() {
