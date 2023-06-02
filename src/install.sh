@@ -123,7 +123,7 @@ stinstall() {
 
       line="alias $b"'=$HOME/.kish/'"$a"
       # exclude alaises its self as in aliases folder.
-      if [ $b != 'aliases' ] && [[ $b != *dr ]]; then
+      if [ $b != 'aliases' ] && [[ $b != *dr ]] && [[ $b != *test* ]]; then
         # todo - nice to have: check if a dr file made, indicate (dr)
         # if [ -f "$PWD/aliases/$f dr" ]
         echo $line >>$alias_file
