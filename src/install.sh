@@ -9,6 +9,12 @@ kcore=$PWD/node_modules/kish-core
 dest="$HOME/.kish"
 alias_source="source $dest/aliases.sh "
 
+
+b1='  ,-,-.   '
+b2=' / ( I \  '
+b3=' \ K ) /  '
+b4="  \`-'-'   "
+
 # cp "./tasks/lib/*" "$dest/lib"
 # echo "mkdir $dest"
 
@@ -123,7 +129,7 @@ stinstall() {
 
       line="alias $b"'=$HOME/.kish/'"$a"
       # exclude alaises its self as in aliases folder.
-      if [ $b != 'aliases' ] && [[ $b != *dr ]] && [[ $b != *test* ]]; then
+      if [ $b != 'aliases' ] && [[ $b != *dr ]] && [[ $b != *test* ]] && [[ $b != *lib* ]]; then
         # todo - nice to have: check if a dr file made, indicate (dr)
         # if [ -f "$PWD/aliases/$f dr" ]
         echo $line >>$alias_file
@@ -190,10 +196,11 @@ stinstall() {
     echo "$alias_source" >>"$HOME/.bashrc"
   fi
 
-  echo 'ki sh Updated.'
-  echo 'if new aliases added restart terminal.' 
-  echo '$>ki for generated help.'
-  echo ''
+  echo "$b1"
+  echo "$b2 ki sh Updated."
+  echo "$b3 if new aliases added restart terminal." 
+  echo "$b4 $>ki for generated help."
+  echo ""
 
 }
 
