@@ -105,14 +105,40 @@ function desc () {
 
 # search all .test files (++and sub dirs) ()
 
-# function parseTestFiles() {
-  # echo $PWD
-   for f in $PWD/*.test*; do
+: '
+no params : default dir (aliases)
+param : dir - *.test* within it.
+param : one file - just that file
+param : glob (multiple test files x*)
+
+'
+
+test_files=''
+if (( $# > 1 )); then
+   test_files="$@"
+else 
+    if [ -f "$1" ];then
+        test_files="$1" 
+    else
+       #if $1 dir   
+       if [ -d "$1" ]; then
+         test_files="$1/*.test*"
+       else
+            test_files="$PWD/*.test*"
+        fi
+    fi
+fi
+
+echo "test_files: $test_files"
+
+   for f in $test_files; do
+   echo "--------------------------------"
    echo "Test File: " $f
    #  () subshell: to improve tests isolation.  kstate to track passes/failed tests
    (
     source $f
    )
+   echo ""
    done
 
 testpasses=$(kstate_get "$TP")

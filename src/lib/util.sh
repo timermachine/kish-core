@@ -8,11 +8,11 @@ function join_by { local d=$1; shift; local f=$1; shift; datestr=$( printf %s "$
 # kstate _init _increment _get _set  TODO: _clear (wipe file/S)
 # handy for state sharing between shells/subshells
 
-local kstate_path="$HOME/.kish/temp/"
+ kstate_path="$HOME/.kish/temp/"
 
 # kstate_init id  sets to zero
 function kstate_init () {
-  echo    "${YELLOW} kstate_init: $kstate_path$1"
+#   echo    "${YELLOW} kstate_init: $kstate_path$1"
   echo 0 > "$kstate_path$1"
 }
 
