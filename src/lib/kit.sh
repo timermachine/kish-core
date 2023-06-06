@@ -24,7 +24,29 @@
   * So there, kudos, and ya boo sucks Bats ;)
   * tests should be easily portable to bats/whatever latest & next greatest test framework that might come along.
   but these are bash scripts, so this  a keep it simple option.
-  The only nice to have I might add is generate fn.sh, fn.lib.sh, fn.test.sh
+
+
+Run a sepcific test /directory.
+
+tap compliance!
+test fail/pass count & summary
+last run fails only (store file, line)
+
+# SETUP-TO
+
+# ONLY-FROM
+
+# ONLY
+
+Parse to temp.test.sh
+
+This is nice because integration tests will run every thing - igoring onlys!
+
+
+Pretty much what’s left is eq codes/tap compatibility.
+
+
+  Generate: The only nice to have I might add is generate fn.sh, fn.lib.sh, fn.test.sh
 
 
  
@@ -38,19 +60,29 @@
  source "$HOME/.kish/lib/colors.sh"
  source "$HOME/.kish/lib/util.sh"
 
+ TP="testpass"
+ TF="testfail"
+
+ kstate_init $TP
+ kstate_init $TF
+
 function xeq() {
   # noop
+  return 0 # ok
 }
 
 function eq () {
   local testdesc="$1"
   local result="$2"
   local expected="$3"
-    echo "  $testdesc:"
+
+  echo "  $testdesc:"
    if [ "$result" == "$expected" ];then
+     kstate_increment "$TP"
      printf "${IGre}"
      echo "    √ $result == $expected "
    else
+      kstate_increment "$TF"
       printf "${IRed}"
       echo "    x $result != $expected"
     fi
@@ -65,3 +97,31 @@ function desc () {
    echo "$1"
     printf "${IWhi}"
 }
+
+
+# cd's to aliases (++ check current dir has any .test files first, if so run from there instead, fallback to configured dir.)
+# search all .test files (++and sub dirs) ()
+# parse test files searching for only/onlyeq? / onlyfrom tag.
+
+# search all .test files (++and sub dirs) ()
+
+# function parseTestFiles() {
+  # echo $PWD
+   for f in $PWD/*.test*; do
+   echo "Test File: " $f
+   #  () subshell: to improve tests isolation.  kstate to track passes/failed tests
+   (
+    source $f
+   )
+   done
+
+testpasses=$(kstate_get "$TP")
+testfails=$(kstate_get "$TF")
+let testcounter=testpasses+testfails
+
+ echo  "${GREEN}$testpasses tests passed. ${RED} $testfails tests failed. ${NORMAL} $testcounter tests ran."
+
+  # CI: 0: no errors >0 erros.  
+  #  return  $tesFails
+
+

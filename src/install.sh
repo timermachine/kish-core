@@ -106,6 +106,7 @@ stinstall() {
   # echo ''
   mkdir "$dest"
   mkdir "$dest/lib"
+   mkdir "$dest/temp" # for state tracking files
 
   # ensure file exists and empty
   alias_file="$PWD/aliases/aliases.sh"
