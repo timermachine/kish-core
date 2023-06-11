@@ -86,37 +86,36 @@ function cmdurl () {
 # return $1 right padded with zeros to total length $2
 # eg 3 4 -> 3000
 # optional $3 padding character. defaults to 0.
-# function pad(){
-#     local res=""
-#     padto=$(($2 - ${#1}))
+function pad(){
+    local res=""
+    padto=$(($2 - ${#1}))
 
-#     padchar='0' # deafult 
+    padchar='0' # deafult 
 
-#    if (( $# == 3 )); then
-#         # override default with last param
-#         padchar="${@: -1}"
-#     fi
+   if (( $# == 3 )); then
+        # override default with last param
+        padchar="${@: -1}"
+    fi
 
-#     # echo $padto
-#     for (( i=1; i<=$padto; i++ )) do 
-#        res+=$padchar
-#     done
-#     echo $res
-# }
+    # echo $padto
+    for (( i=1; i<=$padto; i++ )) do 
+       res+=$padchar
+    done
+    echo $res
+}
 
-# function lpad(){
-#     lres= pad $1 $2
-#     echo "lres $lres"
-#     lres+= $1
-#     echo $lres
-# }
+function lpad(){
+    lres=$(pad "$1" "$2")
+    lres+=$1
+    echo "$lres"
+}
 
-# function rpad(){
-#     padding= pad $1 $2
-#     rres= $1
-#     rres+= $padding
-#     echo $rres
-# }
+function rpad(){
+    padding=$(pad "$1" "$2")
+    rres=$1
+    rres+=$padding
+    echo $rres
+}
 
 
 #  rpadding= rpad "x" "2"
