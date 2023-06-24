@@ -171,6 +171,15 @@ function lrpad(){
 }
 
 
+function dateshim() {
+  osinfo=$(uname '-s')
+  if [[ "Darwin" == *"$osinfo"* ]]; then
+  res=$(date "-v+$1"  +"%Y%m%dT%H%M")
+  echo "$res"
+  else 
+  echo "TODO linux or other (date -d instead of -v for mac...)"
+fi
+}
 
 # function rpad(){
 #     local res=""
