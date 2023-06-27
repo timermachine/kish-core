@@ -5,6 +5,7 @@
 function join { local IFS="$1"; shift; echo "$*"; }
 function join_by { local d=$1; shift; local f=$1; shift; datestr=$( printf %s "$f" "${@/#/$d}" ); }
 
+
 # kstate _init _increment _get _set  TODO: _clear (wipe file/S)
 # handy for state sharing between shells/subshells
 
