@@ -58,13 +58,76 @@ Pretty much what’s left is eq codes/tap compatibility.
 
 
  source "$HOME/.kish/lib/colors.sh"
- source "$HOME/.kish/lib/util.sh"
+ source "$HOME/.kish/lib/util.sh" # moved kstate here - do we need utils?
 
- TP="testpass"
- TF="testfail"
+# States for global tracking :
+#  kstate - test fail/pass counter
+#  xstate - disable/enable test runs
+
+ kstate_path="$HOME/.kish/temp/"
+ TP="testpass" #filename to log test passes
+ TF="testfail" #filename to log test fails
+ XSTATE="xstate" #filename to log xstate (on/off) for test run exclusion
+
+# kstate_init id  sets to zero
+function kstate_init () {
+#   echo    "${YELLOW} kstate_init: $kstate_path$1"
+  echo 0 > "$kstate_path$1"
+}
+
+# increment counter
+function kstate_increment () {
+    let kincrement=$(cat  "$kstate_path$1")+1
+    echo $kincrement > "$kstate_path$1"
+}
+
+# get id
+function kstate_get () {
+    echo $(cat "$kstate_path$1")
+}
+
+# set id value
+function kstate_set () {
+    echo $1 > "$kstate_path$1"
+}
+
+
+# ------- xstate block start --------
+
+#xreset id  sets to zero name:reset/init?
+function xstate_init () {
+  echo 0 > "xstate_path$XSTATE"
+}
+
+# get xstate
+function xstate_get () {
+    echo $(cat "xstate_path$XSTATE")
+}
+
+# set xstate value
+function xstate_set () {
+    echo $1 > "xstate_path$XSTATE"
+}
+# -------xstate block end--------
+
 
  kstate_init $TP
  kstate_init $TF
+ xstate_init
+
+ # turns off tests - eg: eq, desc  
+ function x () {
+  xstate_set 1
+  # echo "x. xstate:$xstate"
+ }
+
+
+ # turns back on (xstate=false) for eq, desc (if x previously called)
+ function xoff () {
+  # echo "xstate was: $xstate"
+  xstate_set 0
+  # echo "xoff. xstate:$xstate" && return 0 && exit
+ }
 
 function xeq() {
   # noop
@@ -72,6 +135,8 @@ function xeq() {
 }
 
 function eq () {
+
+  [[ $(xstate_get) -eq 1 ]] && return 0 && exit
   local testdesc="$1"
   local result="$2"
   local expected="$3"
@@ -92,6 +157,7 @@ function eq () {
 
 
 function desc () {
+  [[ $(xstate_get) -eq 1 ]] && return 0
   echo ""
    printf "${BIWhi}"
    echo "$1"
