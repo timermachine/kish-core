@@ -48,11 +48,11 @@ function cmdurl () {
 
     # split $1 into domain+paths (\? delimiter) query after delimiter
     local dom_query=(`echo $1 | tr '\?' ' '`)
-    echo 'dom_query' $dom_query
+    log_info 'dom_query' $dom_query
     if [[ ${#dom_query[@]} == 2 ]]; then
      local query=${dom_query[1]}
     fi
-    echo "query $query"
+    log_info "query $query"
    
 
     # split dom of dom_query into domain and trailing path/s
