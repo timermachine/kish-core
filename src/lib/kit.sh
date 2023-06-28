@@ -67,7 +67,9 @@ Pretty much what’s left is eq codes/tap compatibility.
  kstate_path="$HOME/.kish/temp/"
  TP="testpass" #filename to log test passes
  TF="testfail" #filename to log test fails
- XSTATE="xstate" #filename to log xstate (on/off) for test run exclusion
+ TS="tesskip" #filename to log tesk skips (x/xoff)
+ xstate_path="$HOME/.kish/temp/"
+ XSTATE_FILE="xstate" #filename to log xstate (on/off) for test run exclusion
 
 # kstate_init id  sets to zero
 function kstate_init () {
@@ -96,23 +98,25 @@ function kstate_set () {
 
 #xreset id  sets to zero name:reset/init?
 function xstate_init () {
-  echo 0 > "xstate_path$XSTATE"
+  echo 0 > "$xstate_path$XSTATE_FILE"
+  echo "xstate_init ()"
 }
 
 # get xstate
 function xstate_get () {
-    echo $(cat "xstate_path$XSTATE")
+    echo $(cat "$xstate_path$XSTATE_FILE")
 }
 
 # set xstate value
 function xstate_set () {
-    echo $1 > "xstate_path$XSTATE"
+    echo $1 > "$xstate_path$XSTATE_FILE"
 }
 # -------xstate block end--------
 
 
  kstate_init $TP
  kstate_init $TF
+ kstate_init $TS
  xstate_init
 
  # turns off tests - eg: eq, desc  
@@ -126,6 +130,7 @@ function xstate_set () {
  function xoff () {
   # echo "xstate was: $xstate"
   xstate_set 0
+  echo "xoff ()"
   # echo "xoff. xstate:$xstate" && return 0 && exit
  }
 
@@ -134,25 +139,31 @@ function xeq() {
   return 0 # ok
 }
 
+
 function eq () {
+  
+  xs=$(xstate_get)
+  # log_info "eq xstate: $xs"
+    if [[ "$xs" -eq 1 ]]; then 
+    kstate_increment "$TS"
+    else
+    local testdesc="$1"
+    local result="$2"
+    local expected="$3"
 
-  [[ $(xstate_get) -eq 1 ]] && return 0 && exit
-  local testdesc="$1"
-  local result="$2"
-  local expected="$3"
-
-  echo "  $testdesc:"
-   if [ "$result" == "$expected" ];then
-     kstate_increment "$TP"
-     printf "${IGre}"
-     echo "    √ $result == $expected "
-   else
-      kstate_increment "$TF"
-      printf "${IRed}"
-      echo "    x $result != $expected"
+    echo "  $testdesc:"
+    if [ "$result" == "$expected" ];then
+      kstate_increment "$TP"
+      printf "${IGre}"
+      echo "    √ $result == $expected "
+    else
+        kstate_increment "$TF"
+        printf "${IRed}"
+        echo "    x $result != $expected"
+      fi
+      # reset color
+      printf "${IWhi}"
     fi
-    # reset color
-    printf "${IWhi}"
 }
 
 
@@ -209,11 +220,12 @@ echo "test_files: $test_files"
 
 testpasses=$(kstate_get "$TP")
 testfails=$(kstate_get "$TF")
-let testcounter=testpasses+testfails
+testskips=$(kstate_get "$TS")
+(( testcounter=testpasses+testfails ))
 
- echo  "${GREEN}$testpasses tests passed. ${RED} $testfails tests failed. ${NORMAL} $testcounter tests ran."
+ echo  "${GREEN}$testpasses passed. ${RED} $testfails  failed. ${NORMAL} $testskips skipped. $testcounter tests ran."
 
   # CI: 0: no errors >0 erros.  
   #  return  $tesFails
-
+xoff
 
