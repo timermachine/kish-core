@@ -63,7 +63,7 @@ Pretty much what’s left is eq codes/tap compatibility.
 # States for global tracking :
 #  kstate - test fail/pass counter
 #  xstate - disable/enable test runs
-
+#  TODO CHORE: refactor kstate and xstate to just state
  kstate_path="$HOME/.kish/temp/"
  TP="testpass" #filename to log test passes
  TF="testfail" #filename to log test fails
@@ -99,7 +99,6 @@ function kstate_set () {
 #xreset id  sets to zero name:reset/init?
 function xstate_init () {
   echo 0 > "$xstate_path$XSTATE_FILE"
-  echo "xstate_init ()"
 }
 
 # get xstate
@@ -128,25 +127,31 @@ function xstate_set () {
 
  # turns back on (xstate=false) for eq, desc (if x previously called)
  function xoff () {
-  # echo "xstate was: $xstate"
   xstate_set 0
-  echo "xoff ()"
-  # echo "xoff. xstate:$xstate" && return 0 && exit
  }
 
 function xeq() {
   # noop
+  kstate_increment "$TS"
   return 0 # ok
 }
 
+function it () {
+   if [[ $(xstate_get) -eq 0 ]]; then
+    eval "$1"
+    else 
+      kstate_increment "$TS"
+   fi
+}
+
+function xit () {
+    kstate_increment "$TS"
+}
 
 function eq () {
-  
-  xs=$(xstate_get)
+  # xs=$(xstate_get)
   # log_info "eq xstate: $xs"
-    if [[ "$xs" -eq 1 ]]; then 
-    kstate_increment "$TS"
-    else
+    # if [[ "$xs" -eq 0 ]]; then 
     local testdesc="$1"
     local result="$2"
     local expected="$3"
@@ -163,7 +168,7 @@ function eq () {
       fi
       # reset color
       printf "${IWhi}"
-    fi
+    # fi
 }
 
 
