@@ -121,9 +121,11 @@ function xstate_set () {
  # turns off tests - eg: eq, desc  
  function x () {
   xstate_set 1
-  # echo "x. xstate:$xstate"
  }
-
+# editors can upper case just x annoyingly
+function X () {
+  xstate_set 1
+ }
 
  # turns back on (xstate=false) for eq, desc (if x previously called)
  function xoff () {
