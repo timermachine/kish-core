@@ -48,7 +48,7 @@ function JSON () {
 
 function JSONP () {
   IFS=' '  
-#   log_info "jsondata: $2"
+   log_info "JSONP data: $2"
   res=$(node -pe "JSON.parse(process.argv[1]).$1" "$2")
   [[ $res != 'undefined' ]] && echo "$res"
 }
