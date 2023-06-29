@@ -22,6 +22,8 @@ function log {
 
 # Log the given message at INFO level. All logs are written to stderr with a timestamp.
 function log_info {
+  # todo: log levels - turn on/off easily.
+  # return 0
   local -r message="$1"
   log "INFO" "$message"
 }

@@ -2,7 +2,7 @@
 # Utility functions
 
 # deprecate these:
-function join { local IFS="$1"; shift; echo "$*"; }
+function join { local IFS="$1"; shift; echo "$*";IFS=' ' }
 function join_by { local d=$1; shift; local f=$1; shift; datestr=$( printf %s "$f" "${@/#/$d}" ); }
 
 # in favour of: examle:

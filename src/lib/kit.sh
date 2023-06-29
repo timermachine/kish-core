@@ -119,13 +119,13 @@ function xstate_set () {
  xstate_init
 
  # turns off tests - eg: eq, desc  
- function x () {
+ function xon () {
   xstate_set 1
  }
 # editors can upper case just x annoyingly
-function X () {
-  xstate_set 1
- }
+# function X () {
+#   xstate_set 1
+#  }
 
  # turns back on (xstate=false) for eq, desc (if x previously called)
  function xoff () {
@@ -162,24 +162,29 @@ function eq () {
     if [ "$result" == "$expected" ];then
       kstate_increment "$TP"
       printf "${IGre}"
-      echo "    √ $result == $expected "
+        echo "   √  $result."
+        echo "   == $expected."
     else
         kstate_increment "$TF"
         printf "${IRed}"
-        echo "    x $result != $expected"
+        echo "   x  $result."
+        echo "   != $expected."
       fi
       # reset color
-      printf "${IWhi}"
+      printf "${IWhi}\n"
     # fi
 }
 
 
 function desc () {
   [[ $(xstate_get) -eq 1 ]] && return 0
-  echo ""
+  # echo "------------------------ DESC -----------------------------------------------"
+  #  printf ">>>>>>>>>>>> ${BIWhi} % ${IWhi} >>>>>>>>>>>> \n" "$1"
+
    printf "${BIWhi}"
    echo "$1"
-    printf "${IWhi}"
+  printf "${IWhi}"
+  echo ""
 }
 
 
@@ -216,8 +221,8 @@ fi
 echo "test_files: $test_files"
 
    for f in $test_files; do
-   echo "--------------------------------"
-   echo "Test File: " $f
+   echo ""
+   echo "-------------------------------- Test File: $f --------------------------------"
    #  () subshell: to improve tests isolation.  kstate to track passes/failed tests
    (
     source $f
@@ -230,6 +235,8 @@ testfails=$(kstate_get "$TF")
 testskips=$(kstate_get "$TS")
 (( testcounter=testpasses+testfails ))
 
+ echo "##################### Tests Done ######################"
+ echo ""
  echo  "${GREEN}$testpasses passed. ${RED} $testfails  failed. ${NORMAL} $testskips skipped. $testcounter tests ran."
 
   # CI: 0: no errors >0 erros.  
