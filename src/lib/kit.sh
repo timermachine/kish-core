@@ -239,7 +239,11 @@ testskips=$(kstate_get "$TS")
  echo ""
  echo  "${GREEN}$testpasses passed. ${RED} $testfails  failed. ${NORMAL} $testskips skipped. $testcounter tests ran."
 
-  # CI: 0: no errors >0 erros.  
-  #  return  $tesFails
-xoff
+
+ xoff #turn x off for next test run.
+ 
+ # CI: 0: no errors; >0 erros. todo: TAP compliance.
+# to figure out: return: can only `return' from a function or sourced script
+# return  "$testfails"
+
 

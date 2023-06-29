@@ -2,7 +2,7 @@
 # Utility functions
 
 # deprecate these:
-function join { local IFS="$1"; shift; echo "$*";IFS=' ' }
+function join { local IFS="$1"; shift; echo "$*"; }
 function join_by { local d=$1; shift; local f=$1; shift; datestr=$( printf %s "$f" "${@/#/$d}" ); }
 
 # in favour of: examle:
@@ -21,7 +21,16 @@ function join_by { local d=$1; shift; local f=$1; shift; datestr=$( printf %s "$
 # JSONP implementation requires node js
 
 # flat stupidly simple json serialiser.
-JSON () {
+# params:  key value key value ...
+# example:
+# intitle='gotta get into it if you wanna get out of it'
+# indatespec="20031231T2359/20040101T0000"
+# my_json=$(JSON "title" "$intitle" "datespec" "$indatespec")
+# echo "my_json: $my_json"
+# title=$(JSONP "title" "$my_json")
+# datespec=$(JSONP "datespec" "$my_json")
+# echo "outtitle: $title, outdatespec: $datespec"
+function JSON () {
   local i=0
   local res=''
   local params=("$@")
@@ -29,7 +38,7 @@ JSON () {
   while [ $i -lt $# ]
   do
     # echo $i "${params[$i]}" "${params[$i+1]}"  
-    res+=" \"${params[$i]}\" : \"${params[$i+1]}\" "  
+    res+="\"${params[$i]}\":\"${params[$i+1]}\""  
     i=$(( $i + 2))
     [[ i -lt $#-1 ]] && res+=','
   done
@@ -37,8 +46,11 @@ JSON () {
   echo "$res"
 }
 
-JSONP () {
-  node -pe "JSON.parse(process.argv[1]).$1" "$2"
+function JSONP () {
+  IFS=' '  
+#   log_info "jsondata: $2"
+  res=$(node -pe "JSON.parse(process.argv[1]).$1" "$2")
+  [[ $res != 'undefined' ]] && echo "$res"
 }
 
 
