@@ -14,6 +14,32 @@ function join_by { local d=$1; shift; local f=$1; shift; datestr=$( printf %s "$
 # handy for state sharing between shells/subshells
 
 
+# JSON, JSONP : JSON super basic, flat structures only.
+# using to serialise vars and return as json as workaround for 
+# bash <v4 only can echo strings from functions
+# a way to get more than one variable back from functions
+# JSONP implementation requires node js
+
+# flat stupidly simple json serialiser.
+JSON () {
+  local i=0
+  local res=''
+  local params=("$@")
+  
+  while [ $i -lt $# ]
+  do
+    # echo $i "${params[$i]}" "${params[$i+1]}"  
+    res+=" \"${params[$i]}\" : \"${params[$i+1]}\" "  
+    i=$(( $i + 2))
+    [[ i -lt $#-1 ]] && res+=','
+  done
+ res="{$res}"
+  echo "$res"
+}
+
+JSONP () {
+  node -pe "JSON.parse(process.argv[1]).$1" "$2"
+}
 
 
 # cmdurl
