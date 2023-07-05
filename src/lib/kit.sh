@@ -7,7 +7,7 @@
 
 source "$HOME/.kish/lib/colors.sh"
 source "$HOME/.kish/lib/util.sh" # moved kstate here - do we need utils?
-
+source "$HOME/.kish/lib/log.sh"
 # States for global tracking :
 #  kstate - test fail/pass counter
 #  xstate - disable/enable test runs
@@ -160,10 +160,11 @@ param : glob (multiple test files x*)
 
 test_files=''
 if (($# > 1)); then
-  test_files="$@"
+  test_files="$@" #can test mutliple files.
 else
   if [ -f "$1" ]; then
-    test_files="$1"
+    test_files="$1" 
+    # log_info "test single file"
   else
     #if $1 dir
     if [ -d "$1" ]; then
@@ -174,14 +175,20 @@ else
   fi
 fi
 
+if (($# == 0)); then
+  test_files="$KISHDIR/aliases/*.test*"
+  cd $KISHDIR/aliases/
+fi
+
 echo "test_files: $test_files"
+
 
 for f in $test_files; do
 
   source_code=$(cat "$f")
 
   if [[ "$source_code" =~ .*oit*. ]]; then
-    # echo 'noopit!'
+    # echo 'oit:noop it!'
     function it() {
       _it_disabled
     }

@@ -3,6 +3,7 @@
 # cd "$(dirname "$0")"
 # source ./colors.sh
 source "$HOME/.kish/lib/colors.sh"
+source "$HOME/.kish/lib/log.sh"
 st=''
 cmd=''
 applicable='any'
@@ -10,6 +11,7 @@ inapplicable='./node_modules'
 mode=1 # 1: *dirs (/. to specify single) 2: single given dir.
 
 function singleaction() {
+
     returndir=$PWD
     #  echo "action in $1"
     # todo: dry run: show what it would do, and ask confirm if any params are -dr
@@ -17,21 +19,33 @@ function singleaction() {
     #  echo "$dir != $inapplicable ?"
     # if [ "$dir" != "$inapplicable" ]; then
 
-    [ -e "$returndir" ] && cd "$1" || exit
-    # echo "is a dry run: $dryrun ."
-    if [ "$dryrun" = true ]; then
-        echo "$dr> $cmd $2 $3 $4 $5 $6 $7 $8 $9"
+    # single file aciton:
+
+    # log_info "single action. $1 $returndir"
+
+    if [ -f "$1" ]; then
+     log_info "single action. on single file "
+        $cmd $1
     else
-        if [ "$st" = 'gc' ]; then
-            # quote wrap the message string
-            $cmd "\"$2\"" $3 $4 $5 $6 $7 $8 $9
-        else
-            $cmd $2 $3 $4 $5 $6 $7 $8 $9
 
+        if [ -d "$1" ] && [ -e "$returndir" ]; then
+            # log_info "cd to $1"
+            cd "$1" || exit
         fi
-    fi
-    [ -e "$returndir" ] && cd "$returndir" || exit
+        if [ "$dryrun" = true ]; then
+            echo "$dr> $cmd $2 $3 $4 $5 $6 $7 $8 $9"
+        else
+            log_info "single action. mutiparams"
+            if [ "$st" = 'gc' ]; then
+                # quote wrap the message string
+                $cmd "\"$2\"" $3 $4 $5 $6 $7 $8 $9
+            else
+                $cmd $2 $3 $4 $5 $6 $7 $8 $9
 
+            fi
+        fi
+        [ -e "$returndir" ] && cd "$returndir" || exit
+    fi
 }
 
 # multiaction :
@@ -126,7 +140,7 @@ function action() {
     fi
     # slashdot logic. allows forcing single action on current dir ignores applicables:
     # [[ $1 =~ /\. ]] && echo 'slash dot at end: /.'
-    if [[ $1 =~ /\. ]] || [ "$1" = '.' ]; then
+    if [[ $1 =~ /\. ]] || [ "$1" = '.' ] || [ -f "$1" ]; then
         # printf "${IPur}"
         # echo "$st: $cmd  $1 $2 $3 $4 $5 $6 $7 $8 $9"
         # printf "${Whi}"
@@ -180,4 +194,3 @@ function action() {
     fi
 
 }
-
