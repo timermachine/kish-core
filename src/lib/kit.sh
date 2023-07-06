@@ -92,7 +92,7 @@ function it() {
 function oit() {
   _it_enabled "$1"
 }
-function _it_disabled() {
+function _fn_disabled() {
   return 0
 }
 
@@ -109,6 +109,13 @@ function xit() {
 }
 
 function eq() {
+  _eq_enabled "$@"
+}
+function oeq() {
+  _eq_enabled "$@"
+}
+
+function _eq_enabled() {
   # xs=$(xstate_get)
   # log_info "eq xstate: $xs"
   # if [[ "$xs" -eq 0 ]]; then
@@ -163,7 +170,7 @@ if (($# > 1)); then
   test_files="$@" #can test mutliple files.
 else
   if [ -f "$1" ]; then
-    test_files="$1" 
+    test_files="$1"
     # log_info "test single file"
   else
     #if $1 dir
@@ -182,7 +189,6 @@ fi
 
 echo "test_files: $test_files"
 
-
 for f in $test_files; do
 
   source_code=$(cat "$f")
@@ -190,8 +196,18 @@ for f in $test_files; do
   if [[ "$source_code" =~ .*oit*. ]]; then
     # echo 'oit:noop it!'
     function it() {
-      _it_disabled
+      _fn_disabled
     }
+  fi
+
+  if [[ "$source_code" =~ .*oeq*. ]]; then
+    function eq() {
+      _fn_disabled
+    }
+  # else
+  #   function eq() {
+  #     _eq_enabled "$@"
+  #   }
   fi
 
   echo ""

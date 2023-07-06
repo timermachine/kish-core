@@ -16,6 +16,9 @@ function setup() {
     else
         cd "ki-spread-testrig"
     fi
+
+    shopt -s expand_aliases
+    source "$HOME/.kish/aliases.sh"
 }
 
 function teardown() {
@@ -40,7 +43,7 @@ t() {
     local input="./"
     cmd="ls"
     res=$(_ki-spread "$input")
-    eq "($cmd $input). Perform command on all child dirs. " "$res" "cd .//A,ls ,cd $PWD,cd .//B,ls ,cd $PWD,cd .//C,ls ,cd $PWD,"
+    eq "($cmd $input). Perform command on all child dirs. " "$res" "cd ./A,echo '',echo \'./A:\',ls ,cd $PWD,cd ./B,echo '',echo \'./B:\',ls ,cd $PWD,cd ./C,echo '',echo \'./C:\',ls ,cd $PWD,"
     ki-spread "./"
 }
 it t
@@ -49,10 +52,10 @@ t() {
     local input=""
     cmd="ls"
     res=$(_ki-spread )
-    eq "(no params) default to . dir. Perform command on all child dirs. " "$res" "cd .//A,ls ,cd $PWD,cd .//B,ls ,cd $PWD,cd .//C,ls ,cd $PWD,"
+    eq "(no params) default to . dir. Perform command on all child dirs. " "$res" "cd ./A,echo '',ey ./A:,ls ,cd /Users/henrykemp/dev/Timermachine/kish-core/src/lib/ki-spread-testrig,cd ./B,echo '',ey ./B:,ls ,cd /Users/henrykemp/dev/Timermachine/kish-core/src/lib/ki-spread-testrig,cd ./C,echo '',ey ./C:,ls ,cd /Users/henrykemp/dev/Timermachine/kish-core/src/lib/ki-spread-testrig,"
     ki-spread "./"
 }
-it t
+oit t
 
 t() {
     local input="./C"
@@ -76,6 +79,26 @@ t() {
     e2eres=$(ki-spread "")
     eq "e2e git applicable" "$e2eres" "a.txt
 a2.txt" # runs it.
+}
+it t
+
+t() {
+    local input="./B/b.txt"
+    cmd="ga"
+    applicable=".git"
+    res=$(_ki-spread "$input" )
+    eq "($input) specific file overrides applicable. " "$res" "ga ./B/b.txt"
+    ki-spread "./"
+}
+it t
+
+t() {
+    local input="B/b.txt"
+    cmd="ga"
+    applicable=".git"
+    res=$(_ki-spread "$input" )
+    eq "($input) specific file overrides applicable. " "$res" "ga B/b.txt"
+    ki-spread "./"
 }
 it t
 

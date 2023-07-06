@@ -24,19 +24,24 @@ cmd=''
 applicable='any'
 inapplicable='./node_modules'
 
+
 function multi() {
     
-    log_info "multi *: $*"
+    #log_info "multi *: $*"
 
     local returndir=$PWD
     
     local cmd_arr=()
     #  log_info "multi. $1"
-    log_info "applicable: $dir/$applicable"
-    for dir in $1/*; do
+    # log_info "applicable: $dir/$applicable"
+    for dir in $1*; do
         if [ -d "$dir" ]; then
             if [ "$applicable" = 'any' ] || [ -e "$dir/$applicable" ]; then
+                # local dir_stripped= ${str/\/\//\/}
                 cmd_arr+=("cd $dir")
+                cmd_arr+=("echo ''")
+                #  cmd_arr+=("echo \"${YELLOW}$dir:${NORMAL}\"")
+                 cmd_arr+=("ey $dir:")
                 cmd_arr+=("$cmd ") # params (if $@, shift dir)
                 cmd_arr+=("cd $returndir") #("cd ..") #
             fi
@@ -104,7 +109,7 @@ function _ki-spread() {
 
     if [ -f "$1" ]; then # just single cmd action on specific file. todo: globbing.
         res="$cmd $1"
-        log_info "single file: $cmd $1"
+        # log_info "single file: $cmd $1 no applicable applied."
     else
         if [ $# = 0 ]; then # no params( and no workspace filter) default to ./
             res=$(multi "./" "$@")
@@ -126,12 +131,13 @@ function _ki-spread() {
 # workspace
 
 function ki-spread() {
-
+    # log_info "ks $PWD"
     res=$(_ki-spread "$@")
     IFS=','
     read -ra commands <<<"$res"
     IFS=' '
     for i in "${commands[@]}"; do
-        $i
+        # eval strips .//. todo - strip explicitly and drop eval.
+        eval "$i"
     done
 }
