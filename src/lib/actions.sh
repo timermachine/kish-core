@@ -113,6 +113,8 @@ function multiaction() {
     allowedcount=0
     echo ''
 }
+
+
 # entry point.
 # determines singe/multi action.
 function action() {
