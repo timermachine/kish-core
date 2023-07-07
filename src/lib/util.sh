@@ -10,8 +10,27 @@ function join_by { local d=$1; shift; local f=$1; shift; datestr=$( printf %s "$
 # sd="${sa[*]}" #array to space delim str
 # sd=${sd//' '/''} #remove spaces
 
+# echo's $1... $last:colorcode, then resets color to normal
+# simple ver: last param: roygbiv ? mcw  l-lime, 
+# advanced:  further chars could be BKUR U-Underline,R-reverse,B-blink,N-bright/n-normal 
+# these can be in combinations eg: 
+# consider making an alias if useful. but consider testing (function mocking)
+# function ecol() {
+# }
+
+
+
 # kstate _init _increment _get _set  TODO: _clear (wipe file/S)
 # handy for state sharing between shells/subshells
+
+# strip hidden chars (like colors from string)
+# eg ansi_filter "$(tput setaf 9)foobar$(tput sgr0)"
+xansi_filter() {
+    local string
+    string=$1
+    string_sed="$(sed -r "s/\x1B\[[0-9;]*[JKmsu]//g" <<<"${string}")"
+    echo "$string_sed"
+}
 
 
 # JSON, JSONP : JSON super basic, flat structures only.

@@ -9,6 +9,12 @@ source "./ki-spread.sh" # code under test
 '
 
 # setup
+
+function ey() {
+    # log_info 'mock ey, no hidden color codes for easier string comparison'
+    echo "$*"
+}
+
 function setup() {
     if [ ! -d "./ki-spread-testrig" ]; then
         echo "pwd: $PWD. Test rig dir ki-spread-testrig not found. exiting tests"
@@ -19,6 +25,7 @@ function setup() {
 
     shopt -s expand_aliases
     source "$HOME/.kish/aliases.sh"
+
 }
 
 function teardown() {
@@ -28,7 +35,6 @@ function teardown() {
 setup
 
 desc "ki-spread I/O"
-
 
 t() {
     local input="root.txt"
@@ -51,17 +57,17 @@ it t
 t() {
     local input=""
     cmd="ls"
-    res=$(_ki-spread )
+    res=$(_ki-spread)
     eq "(no params) default to . dir. Perform command on all child dirs. " "$res" "cd ./A,echo '',ey ./A:,ls ,cd /Users/henrykemp/dev/Timermachine/kish-core/src/lib/ki-spread-testrig,cd ./B,echo '',ey ./B:,ls ,cd /Users/henrykemp/dev/Timermachine/kish-core/src/lib/ki-spread-testrig,cd ./C,echo '',ey ./C:,ls ,cd /Users/henrykemp/dev/Timermachine/kish-core/src/lib/ki-spread-testrig,"
     ki-spread "./"
 }
-oit t
+it t
 
 t() {
     local input="./C"
     cmd="ls"
     res=$(_ki-spread "$input")
-    eq "($cmd $input) directory specified." "$res" "cd ./C/C1,ls ,cd $PWD,cd ./C/C2,ls ,cd $PWD,"
+    eq "($cmd $input) directory specified." "$res" "cd ./C,echo '',ey ./C:,ls ,cd /Users/henrykemp/dev/Timermachine/kish-core/src/lib/ki-spread-testrig,"
     e2eres=$(ki-spread "$input")
     eq "e2e run directory specified" "$e2eres" "C-C1-c.txt
 C-C1-c2.txt
@@ -75,18 +81,20 @@ t() {
     applicable=".git"
     cmd="ls"
     res=$(_ki-spread "$input")
-    eq "($cmd $input) applicable=$applicable. only exec for dirs that contain applicable." "$res" "cd .//A,ls ,cd $PWD,"
+    eq "($cmd $input) applicable=$applicable. only exec for dirs that contain applicable." "$res" "cd ./A,echo '',ey ./A:,ls ,cd /Users/henrykemp/dev/Timermachine/kish-core/src/lib/ki-spread-testrig,"
     e2eres=$(ki-spread "")
-    eq "e2e git applicable" "$e2eres" "a.txt
+    eq "e2e git applicable" "$e2eres" "
+./A:
+a.txt
 a2.txt" # runs it.
 }
-it t
+oit t
 
 t() {
     local input="./B/b.txt"
     cmd="ga"
     applicable=".git"
-    res=$(_ki-spread "$input" )
+    res=$(_ki-spread "$input")
     eq "($input) specific file overrides applicable. " "$res" "ga ./B/b.txt"
     ki-spread "./"
 }
@@ -96,11 +104,10 @@ t() {
     local input="B/b.txt"
     cmd="ga"
     applicable=".git"
-    res=$(_ki-spread "$input" )
+    res=$(_ki-spread "$input")
     eq "($input) specific file overrides applicable. " "$res" "ga B/b.txt"
     ki-spread "./"
 }
 it t
-
 
 teardown

@@ -25,6 +25,10 @@ applicable='any'
 inapplicable='./node_modules'
 
 
+function ey() {
+    echo "${YELLOW}$*${NORMAL}"
+}
+
 function multi() {
     
     #log_info "multi *: $*"

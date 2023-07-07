@@ -121,7 +121,8 @@ function _eq_enabled() {
   # if [[ "$xs" -eq 0 ]]; then
   local testdesc="$1"
   local result="$2"
-  local expected="$3"
+  local expected="$3" 
+
 
   echo "  $testdesc:"
   if [ "$result" == "$expected" ]; then
@@ -131,9 +132,10 @@ function _eq_enabled() {
     echo "   == $expected."
   else
     kstate_increment "$TF"
-    printf "${IRed}"
-    echo "   x  $result."
-    echo "   != $expected."
+    # printf "${IRed}"
+    echo "   ${RED}x${NORMAL}  $result."
+    echo "   ${RED}!=${NORMAL} $expected."
+    # echo "   != $expected."
   fi
   # reset color
   printf "${IWhi}\n"
