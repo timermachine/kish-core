@@ -40,18 +40,18 @@ function multi() {
         counter+=1
         # trailing dot or just dot - target single dir:
         if [[ $p =~ /\. ]] || [[ $p = '.' ]]; then
-        #  log_info "trail dot: $p counter: $counter"
+            #  log_info "trail dot: $p counter: $counter"
             cmd_arr+=("cd $p")
             cmd_arr+=("echo ''")
             cmd_arr+=("ey $p:")
             cmd_arr+=("$cmd ")         # params (if $@, shift dir)
             cmd_arr+=("cd $returndir") #("cd ..") #
-           
+
         else
 
             for dir in $p/*; do
                 if [ -d "$dir" ]; then
-                #  log_info "dirs in $p"
+                    #  log_info "dirs in $p"
                     if [ "$applicable" = 'any' ] || [ -e "$dir/$applicable" ]; then
                         local dir_stripped=${dir/\/\//\/}
                         # log_info "dir: $dir, stripped: $dir_stripped"
@@ -79,9 +79,20 @@ function _ki-spread() {
     # log_info "params: $*"
     local res
     local has_file_targets
+
     for p in "$@"; do
         if [ -f "$p" ]; then
             has_file_targets=true
+        fi
+        # not a file or directory, assume args for cmd.
+        if [ ! -e "$p" ]; then
+            # if $p contains spaces quote it
+            if [[ "$p" == *" "* ]]; then
+                cmd+=' '
+                cmd+=\"$p\"
+            else
+                cmd+=" $p"
+            fi
         fi
     done
 
@@ -93,27 +104,27 @@ function _ki-spread() {
                 log_info "has_target_files, process dir $p"
                 res+=$(multi "$p/.")
                 res+="echo ,"
-                
+
             fi
             if [ -f "$p" ]; then
                 res+="$cmd $p,"
-                 log_info "has_target_files -f $p"
+                log_info "has_target_files -f $p"
             fi
         done
     fi
-    
+
     if [[ -z "$res" ]]; then
         # else
         if [ $# = 0 ]; then # no params( and no workspace filter) default to ./
             res=$(multi "./" "$@")
         else
             # if [ -d "$1" ]; then # by this point by default should be dir(s) drop check?
-                res=$(multi "$@")
+            res=$(multi "$@")
             # fi
         fi
 
     fi
-    # log_info "_ki_spread. res: $res"
+    log_info "_ki_spread. res: $res"
     echo "$res"
 }
 
