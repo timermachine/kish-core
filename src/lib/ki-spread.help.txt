@@ -1,0 +1,7 @@
+When ki-spread enabled (default)
+cmd             # (no params). runs for current dir's first child dirs
+cmd .           # runs in current dir only.
+cmd mydir       # runs across all first child dirs of mydir  
+cmd mydir/.     # runs in mydir/. only.
+cmd myfile      # runs only on given file(s)
+cmd my*         # runs on all files starting with my (globbing patterns)

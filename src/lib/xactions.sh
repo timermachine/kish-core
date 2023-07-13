@@ -24,7 +24,7 @@ function singleaction() {
     # log_info "single action. $1 $returndir"
 
     if [ -f "$1" ]; then
-     log_info "single action. on single file "
+        log_info "single action. on single file "
         $cmd $1
     else
 
@@ -114,7 +114,6 @@ function multiaction() {
     echo ''
 }
 
-
 # entry point.
 # determines singe/multi action.
 function action() {
@@ -122,7 +121,7 @@ function action() {
 
     # mode 1: *dirs  2: single given dir.
     # if [ $mode = 2 ]; then
-    #     singleaction "$@" && return
+    #     singleki-spread "$@" && return
     # fi
 
     if [ "$dryrun" = true ]; then
@@ -146,11 +145,11 @@ function action() {
         # printf "${IPur}"
         # echo "$st: $cmd  $1 $2 $3 $4 $5 $6 $7 $8 $9"
         # printf "${Whi}"
-        singleaction "$@"
+        singleki-spread "$@"
     else
         #  first param a directory (includes .)
         if [ -d "$1" ]; then
-            multiaction "$@"
+            multiki-spread "$@"
         else
             # eg gf -s  (defaults to execute for all children of .)
             # also for no params. workspace lookup prob goes here.
@@ -177,9 +176,9 @@ function action() {
                             printf "${BYel}"
                             echo "$a"
                             printf "${Whi}"
-                            multiaction "$a" "$@"
+                            multiki-spread "$a" "$@"
                         done
-                        # multiaction "$wsfolders" "$@"
+                        # multiki-spread "$wsfolders" "$@"
 
                         return
                     fi
@@ -190,7 +189,7 @@ function action() {
                 #     # no params, no workspace filter:
 
             fi
-            multiaction "." "$@"
+            multiki-spread "." "$@"
         fi
 
     fi

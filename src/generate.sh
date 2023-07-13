@@ -9,8 +9,8 @@
 
 
 '
- cat "$HOME/.kish/lib/ascii.txt"
- 
+cat "$HOME/.kish/lib/ascii.txt"
+
 #  todo: assumes stgen run with dir to kish. (not src/kish/yadayada/blabla)
 #  feel need a .strc or ~.kish pointer to st forked repo.
 #  otherwise thinking about searching for it - but that seems wrong.
@@ -56,7 +56,7 @@ read command_applicable
 # echo $shorttaskdir
 
 echo '#!/bin/bash' >"$script_file"
-echo 'source "$HOME/.kish/lib/actions.sh"' >>"$script_file"
+echo 'source "$HOME/.kish/lib/ki-spread.sh"' >>"$script_file"
 echo 'source "$HOME/.kish/lib/colors.sh"' >>"$script_file"
 echo '' >>$script_file
 
@@ -85,11 +85,11 @@ if [ $multi_capable = 'y' ] || [ $multi_capable = 'Y' ]; then
     # enquiring: gs, gb, l
     # enquring: push (but not obviously)
     # operational: ga, gco
-    echo 'action "$@"' >>"$script_file"
+    echo 'ki-spread "$@"' >>"$script_file"
 else
     # eg creational: hcl, gcl
     # eg non fs operational: hrl
-    echo 'singleaction "$@"' >>"$script_file"
+    echo 'singleki-spread "$@"' >>"$script_file"
 fi
 # add help template.
 

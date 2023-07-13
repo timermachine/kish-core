@@ -19,110 +19,101 @@ choice: mock cd, cmd? or create test dir. pref A-mock.
 
 source "$HOME/.kish/lib/colors.sh"
 source "$HOME/.kish/lib/log.sh"
-st=''
 cmd=''
 applicable='any'
-inapplicable='./node_modules'
-
 
 function ey() {
     echo "${YELLOW}$*${NORMAL}"
 }
 
 function multi() {
-    
-    #log_info "multi *: $*"
+
+    # log_info "multi *: $*"
 
     local returndir=$PWD
-    
     local cmd_arr=()
+    local counter=0
     #  log_info "multi. $1"
     # log_info "applicable: $dir/$applicable"
-    for dir in $1*; do
-        if [ -d "$dir" ]; then
-            if [ "$applicable" = 'any' ] || [ -e "$dir/$applicable" ]; then
-                # local dir_stripped= ${str/\/\//\/}
-                cmd_arr+=("cd $dir")
-                cmd_arr+=("echo ''")
-                #  cmd_arr+=("echo \"${YELLOW}$dir:${NORMAL}\"")
-                 cmd_arr+=("ey $dir:")
-                cmd_arr+=("$cmd ") # params (if $@, shift dir)
-                cmd_arr+=("cd $returndir") #("cd ..") #
-            fi
+
+    for p in "$@"; do
+        counter+=1
+        # trailing dot or just dot - target single dir:
+        if [[ $p =~ /\. ]] || [[ $p = '.' ]]; then
+        #  log_info "trail dot: $p counter: $counter"
+            cmd_arr+=("cd $p")
+            cmd_arr+=("echo ''")
+            cmd_arr+=("ey $p:")
+            cmd_arr+=("$cmd ")         # params (if $@, shift dir)
+            cmd_arr+=("cd $returndir") #("cd ..") #
+           
+        else
+
+            for dir in $p/*; do
+                if [ -d "$dir" ]; then
+                #  log_info "dirs in $p"
+                    if [ "$applicable" = 'any' ] || [ -e "$dir/$applicable" ]; then
+                        local dir_stripped=${dir/\/\//\/}
+                        # log_info "dir: $dir, stripped: $dir_stripped"
+                        cmd_arr+=("cd $dir_stripped")
+                        cmd_arr+=("echo ''")
+                        cmd_arr+=("ey $dir_stripped:")
+                        cmd_arr+=("$cmd ")         # params (if $@, shift dir)
+                        cmd_arr+=("cd $returndir") #("cd ..") #
+                    fi
+                # else
+                #     cmd_arr+=("echo $cmd: $dir_stripped: No such file or directory")
+                fi
+            done
         fi
-    done
-    #  echo "${cmd_arr[@]}"
-    local res
-    for i in "${cmd_arr[@]}"; do
-        res+="$i,"
+        local res=''
+        for i in "${cmd_arr[@]}"; do
+            res+="$i,"
+        done
+
     done
     echo "$res"
 }
 
-function multiactionreference() {
-
-    allowedcount=0
-    for dir in $1/*; do
-        if [ -d "$dir" ]; then
-
-            if [ "$applicable" = 'any' ] || [ -e "$dir/$applicable" ]; then
-                printf "${IYel}"
-                echo ''
-                echo "$dir:"
-                printf "${Whi}"
-                singleaction $dir "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
-                allowedcount+=1
-
-                # todo: maybe enable with verbose option :
-            else
-                if [ "$dryrun" = true ]; then
-                    printf "${IYel}"
-                    echo ''
-                    echo "$dir: excluded (has no $applicable)"
-                    printf "${Whi}"
-                fi
-            fi
-        # else - todo: verbose mode: say skipped as not an applicable git dir etc.
+function _ki-spread() {
+    # log_info "params: $*"
+    local res
+    local has_file_targets
+    for p in "$@"; do
+        if [ -f "$p" ]; then
+            has_file_targets=true
         fi
-
     done
 
-    # if none of the children were allowable run for parent dir.
-    #  So dont have to g targetdir/. - g targetdir will work.
-    if [ "$allowedcount" = 0 ]; then
-        # todo: verbose mode may show what was excluded and why
-        # echo "debug: $allowedcount not zero"
-        if [ "$applicable" = 'any' ] || [ -e "$1/$applicable" ]; then
-            # printf "${IYel}"
-            # echo ''
-            # echo "$dir:"
-            # printf "${Whi}"
-            singleaction $1 "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9"
-            allowedcount+=1
-        fi
+    # log_info "has_file_targets: $has_file_targets"
+    if [[ "$has_file_targets" = "true" ]]; then
+        for p in "$@"; do
 
+            if [ -d "$p" ]; then
+                log_info "has_target_files, process dir $p"
+                res+=$(multi "$p/.")
+                res+="echo ,"
+                
+            fi
+            if [ -f "$p" ]; then
+                res+="$cmd $p,"
+                 log_info "has_target_files -f $p"
+            fi
+        done
     fi
-    if [ "$allowedcount" = 0 ]; then
-        echo "No child or current dir with $applicable"
-    fi
-    allowedcount=0
-    echo ''
-}
-
-function _ki-spread() {
-
-    if [ -f "$1" ]; then # just single cmd action on specific file. todo: globbing.
-        res="$cmd $1"
-        # log_info "single file: $cmd $1 no applicable applied."
-    else
+    
+    if [[ -z "$res" ]]; then
+        # else
         if [ $# = 0 ]; then # no params( and no workspace filter) default to ./
             res=$(multi "./" "$@")
         else
-            if [ -d "$1" ]; then # act on directory given. todo: cd into it.
+            # if [ -d "$1" ]; then # by this point by default should be dir(s) drop check?
                 res=$(multi "$@")
-            fi
+            # fi
         fi
+
     fi
+    # log_info "_ki_spread. res: $res"
     echo "$res"
 }
 

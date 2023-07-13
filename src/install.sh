@@ -165,9 +165,9 @@ stinstall() {
     fi
   done
 
-  # copy kish-core/src/lib/* to $dest
+  # copy kish-core/src/lib/* files (not subdirs) to $dest
   for f in "$kcore"/src/lib/*; do
-    if [[ -e "$f" ]]; then
+    if [[ -f "$f" ]]; then
       # echo "$f $dest${f##*/}"
       cp "$f" "$dest/lib/${f##*/}"
       chmod a+x "$dest/lib/${f##*/}"
